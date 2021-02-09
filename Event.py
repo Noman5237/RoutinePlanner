@@ -13,6 +13,8 @@ class Event:
         self.start = start
         self.end = end
         self.duration = end - start
+        if start > end:
+            self.duration = self.duration.getHourNMin()
         self.collidedEvents = []
 
     def delegateForward(self, newStartTime):
