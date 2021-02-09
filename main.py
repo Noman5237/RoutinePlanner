@@ -1,4 +1,5 @@
-from random import shuffle, choice
+import operator
+from random import shuffle
 
 from Time import Time
 from Event import Event
@@ -60,18 +61,39 @@ def prepareEvents():
         shuffle(hours)
 
 
-lastRandomSubjects = []
+def rIndex(lst, value):
+    if value not in lst:
+        return -1
+    return len(lst) - operator.indexOf(reversed(lst), value) - 1
+
+
+recentSubjects = []
 
 
 def getRandomSubject(hour=-1):
-    modifiedSubjects = [item for item in subjectsByHours.items() if len(item[1]) > 0]
+    modifiedSubjectsLst = [item for item in subjectsByHours.items() if len(item[1]) > 0]
     hour = int(hour)
     if hour > -1:
-        modifiedSubjects = [item for item in modifiedSubjects if int(item[0]) * 3600 <= hour]
+        modifiedSubjectsLst = [item for item in modifiedSubjectsLst if int(item[0]) * 3600 <= hour]
 
-    if len(modifiedSubjects) > 0:
-        hour, subjects = choice(modifiedSubjects)
-        return tuple((subjects.pop(), hour))
+    if len(modifiedSubjectsLst) > 0:
+        m = 9999
+        s = None
+        sLst = []
+        h = 0
+        for subjectLst in modifiedSubjectsLst:
+            hour, subjects = subjectLst
+            for sub in subjects:
+                mi = rIndex(recentSubjects, sub)
+                if mi < m:
+                    m = mi
+                    s = sub
+                    sLst = subjects
+                    h = hour
+
+        sLst.remove(s)
+        recentSubjects.append(s)
+        return tuple((s, h))
     else:
         return None
 
