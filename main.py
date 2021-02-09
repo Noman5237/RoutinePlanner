@@ -32,14 +32,14 @@ def collide(ev, events):
 subjectsByName = {
     "Physics": ["1"] * 3,
     "Calculus": ["1"] * 3,
-    "Statistics": ["1"] * 2,
+    "Statistics": ["1"] * 3,
     "Android Development": ["2"] * 2,
     "Java": ["2"] * 2,
     "Microservices": ["1"] * 3,
-    "Game Design": ["3"] * 5,
+    "Game Design": ["3"] * 6,
     "CP": ["6"] * 7,
-    "Arabic": ["1"] * 2,
-    "Academics": ["2"] * 6 + ["1"],
+    "Arabic": ["1"] * 4,
+    "Academics": ["2"] * 7,
     "Others": ["1"] * 7
 }
 
@@ -60,16 +60,19 @@ def prepareEvents():
         shuffle(hours)
 
 
-def getRandomSubject(hour=-1):
-    try:
-        modifiedSubjects = [item for item in subjectsByHours.items() if len(item[1]) > 0]
-        hour = int(hour)
-        if hour > -1:
-            modifiedSubjects = [item for item in modifiedSubjects if int(item[0]) * 3600 <= hour]
+lastRandomSubjects = []
 
+
+def getRandomSubject(hour=-1):
+    modifiedSubjects = [item for item in subjectsByHours.items() if len(item[1]) > 0]
+    hour = int(hour)
+    if hour > -1:
+        modifiedSubjects = [item for item in modifiedSubjects if int(item[0]) * 3600 <= hour]
+
+    if len(modifiedSubjects) > 0:
         hour, subjects = choice(modifiedSubjects)
         return tuple((subjects.pop(), hour))
-    except IndexError:
+    else:
         return None
 
 
@@ -93,7 +96,6 @@ if __name__ == '__main__':
             timeConstraintAlternative = getRandomSubject(sleepEvent.start - event.start.getHourNMin())
             if timeConstraintAlternative is None:
                 event.delegateForward(sleepEvent.end)
-                print(sleepEvent)
             else:
                 event = Event(timeConstraintAlternative[0], lastEvent.end,
                               lastEvent.end + Time.FromString(timeConstraintAlternative[1]))
@@ -110,5 +112,7 @@ if __name__ == '__main__':
         weeklySchedule.append(event)
         lastEvent = event
         i += 1
-        print(event, i, event.collidedEvents)
         free = True
+
+    for event in weeklySchedule:
+        print(event)
