@@ -3,6 +3,8 @@ from random import shuffle
 
 from Time import Time
 from Event import Event
+from iCalenderForm import iCalenderEvent, iCalenderCalender
+from datetime import datetime
 
 sleepHours = [
     Event("Sleep", Time(22, 0), Time(0, 0)),
@@ -136,5 +138,11 @@ if __name__ == '__main__':
         i += 1
         free = True
 
-    for event in weeklySchedule:
-        print(event)
+    dayStart = datetime.strptime("2021/02/10", "%Y/%m/%d")
+    with open("schedule.ics", "w") as schedule:
+        print(iCalenderCalender(f"Week {dayStart.strftime('%W')}", str(subjectsByName)), file=schedule)
+        for event in weeklySchedule:
+            print(event)
+            print(iCalenderEvent(event, dayStart), file=schedule)
+
+        print("END:VCALENDAR", file=schedule)
