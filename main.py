@@ -35,10 +35,8 @@ def collide(ev, events):
 
 subjectsByName = {
     "Physics": ["1"] * 3,
-    "Calculus": ["1"] * 3,
-    "Statistics": ["1"] * 3,
-    "Android Development": ["2"] * 2,
-    "Java": ["2"] * 2,
+    "Deep Learning": ["2"] * 3,
+    "Android Development": ["2"] * 4,
     "Microservices": ["1"] * 3,
     "Game Design": ["3"] * 6,
     "CP": ["6"] * 7,
@@ -79,12 +77,15 @@ def getRandomSubject(hour=-1):
     if hour > -1:
         modifiedSubjectsLst = [item for item in modifiedSubjectsLst if int(item[0]) * 3600 <= hour]
 
+    shuffle(modifiedSubjectsLst)
+
     if len(modifiedSubjectsLst) > 0:
         m = 9999
         s = None
         sLst = []
         h = 0
         for subjectLst in modifiedSubjectsLst:
+            search = True
             hour, subjects = subjectLst
             for sub in subjects:
                 mi = rIndex(recentSubjects, sub)
@@ -139,7 +140,7 @@ if __name__ == '__main__':
         i += 1
         free = True
 
-    dayStart = datetime.strptime("2021/02/11", "%Y/%m/%d")
+    dayStart = datetime.strptime("2021/02/14", "%Y/%m/%d")
     with open("schedule.ics", "w") as schedule:
         print(iCalenderCalender(f"Week {dayStart.strftime('%W')}", str(subjectsByName)), file=schedule)
         for event in weeklySchedule:
